@@ -14,7 +14,7 @@
 
         body {
             background: #000;
-            color: #fff;
+            color: #000;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
@@ -68,26 +68,26 @@
         h1 {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            color: #000;
+            text-shadow: none;
         }
 
         h2 {
             font-size: 2rem;
             margin-bottom: 30px;
-            color: #fff;
+            color: #000;
         }
 
         p {
             font-size: 1.2rem;
             margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(0, 0, 0, 0.8);
         }
 
         .btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+            color: #000;
+            border: 1px solid rgba(0, 0, 0, 0.2);
             padding: 15px 40px;
             font-size: 1.1rem;
             border-radius: 50px;
@@ -98,7 +98,7 @@
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
@@ -119,18 +119,18 @@
         .track-name {
             font-size: 1.5rem;
             margin-bottom: 10px;
-            color: #fff;
+            color: #000;
         }
 
         .artist-name {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(0, 0, 0, 0.6);
         }
 
         .progress-container {
             width: 100%;
             height: 6px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 3px;
             cursor: pointer;
             margin-bottom: 20px;
@@ -139,7 +139,7 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.5));
+            background: linear-gradient(90deg, #000, rgba(0, 0, 0, 0.5));
             border-radius: 3px;
             width: 0%;
             transition: width 0.1s linear;
@@ -149,7 +149,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(0, 0, 0, 0.6);
             margin-bottom: 30px;
         }
 
@@ -162,9 +162,9 @@
         }
 
         .control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: #000;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -177,7 +177,7 @@
         }
 
         .control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
             transform: scale(1.1);
         }
 
@@ -198,7 +198,7 @@
             flex: 1;
             height: 6px;
             -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 3px;
             outline: none;
         }
@@ -207,7 +207,7 @@
             -webkit-appearance: none;
             width: 16px;
             height: 16px;
-            background: #fff;
+            background: #000;
             border-radius: 50%;
             cursor: pointer;
         }
@@ -221,7 +221,7 @@
         .equalizer-title {
             font-size: 1.2rem;
             margin-bottom: 15px;
-            color: #fff;
+            color: #000;
         }
 
         .equalizer {
@@ -237,19 +237,55 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .eq-slider-container {
+            width: 30px;
+            height: 100px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 5px;
         }
 
         .eq-slider {
-            -webkit-appearance: slider-vertical;
-            width: 8px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 6px;
+            background: transparent;
             outline: none;
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%) rotate(-90deg);
+            transform-origin: center;
+        }
+
+        .eq-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .eq-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
         }
 
         .eq-label {
             font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(0, 0, 0, 0.6);
             margin-top: 5px;
         }
 
@@ -266,26 +302,26 @@
             align-items: center;
             padding: 15px;
             margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             transform: translateX(5px);
         }
 
         .playlist-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 3px solid #fff;
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 3px solid #000;
         }
 
         .playlist-item-name {
             flex: 1;
-            color: #fff;
+            color: #000;
         }
 
         .delete-btn {
@@ -316,7 +352,7 @@
             height: 80px;
             margin-bottom: 20px;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.05);
         }
 
         /* Scrollbar */
@@ -325,17 +361,17 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -440,7 +476,7 @@
         }
 
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 1)';
             ctx.fillRect(0, 0, width, height);
             
             rotation += 0.003;
@@ -497,6 +533,9 @@
                 const band = document.createElement('div');
                 band.className = 'eq-band';
                 
+                const sliderContainer = document.createElement('div');
+                sliderContainer.className = 'eq-slider-container';
+                
                 const slider = document.createElement('input');
                 slider.type = 'range';
                 slider.className = 'eq-slider';
@@ -512,11 +551,13 @@
                     }
                 });
                 
+                sliderContainer.appendChild(slider);
+                
                 const label = document.createElement('div');
                 label.className = 'eq-label';
                 label.textContent = freqLabels[index];
                 
-                band.appendChild(slider);
+                band.appendChild(sliderContainer);
                 band.appendChild(label);
                 equalizerDiv.appendChild(band);
             });
@@ -570,7 +611,7 @@
                 
                 analyser.getByteFrequencyData(dataArray);
                 
-                visCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                visCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                 visCtx.fillRect(0, 0, visualizer.width, visualizer.height);
                 
                 const barWidth = (visualizer.width / bufferLength) * 2.5;
@@ -581,8 +622,8 @@
                     barHeight = dataArray[i] / 2;
                     
                     const gradient = visCtx.createLinearGradient(0, visualizer.height, 0, 0);
-                    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+                    gradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
+                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
                     
                     visCtx.fillStyle = gradient;
                     visCtx.fillRect(x, visualizer.height - barHeight, barWidth, barHeight);
