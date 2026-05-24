@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Музыкальный Проигрыватель</title>
+    <title>LLMusic</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,6 @@
 
         body {
             background: #000;
-            color: #fff;
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
@@ -29,28 +28,135 @@
             z-index: -1;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        /* Страницы */
+        .page {
+            display: none;
+            min-height: 100vh;
             position: relative;
             z-index: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Стартовая страница */
+        .landing-page {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            color: #000;
+        }
+
+        .landing-page.active {
+            display: flex;
+        }
+
+        .landing-page h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #000;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+
+        .landing-page p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            color: #000;
+        }
+
+        .start-btn {
+            background: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 20px 60px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        /* Страница проигрывателя */
+        .player-page {
+            display: none;
+            padding: 20px;
+        }
+
+        .player-page.active {
+            display: block;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .home-btn {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .home-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5em;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            color: #000;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
         }
 
         .player {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid #000;
         }
 
         .now-playing {
@@ -61,10 +167,11 @@
         .now-playing h2 {
             font-size: 1.5em;
             margin-bottom: 10px;
+            color: #000;
         }
 
         .now-playing p {
-            color: rgba(255, 255, 255, 0.7);
+            color: #333;
             font-size: 1.1em;
         }
 
@@ -77,7 +184,7 @@
         }
 
         .controls button {
-            background: rgba(255, 255, 255, 0.2);
+            background: #000;
             border: none;
             color: #fff;
             padding: 15px 25px;
@@ -88,7 +195,7 @@
         }
 
         .controls button:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: #333;
             transform: scale(1.1);
         }
 
@@ -104,7 +211,7 @@
         .progress-bar {
             width: 100%;
             height: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #ccc;
             border-radius: 5px;
             cursor: pointer;
             position: relative;
@@ -112,7 +219,7 @@
 
         .progress {
             height: 100%;
-            background: #fff;
+            background: #000;
             border-radius: 5px;
             width: 0%;
             transition: width 0.1s ease;
@@ -123,7 +230,7 @@
             justify-content: space-between;
             margin-top: 10px;
             font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.7);
+            color: #333;
         }
 
         .volume-control {
@@ -139,17 +246,81 @@
             cursor: pointer;
         }
 
-        .add-music {
-            background: rgba(255, 255, 255, 0.1);
+        /* Эквалайзер */
+        .equalizer {
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid #000;
+        }
+
+        .equalizer h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .eq-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .eq-band {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .eq-band label {
+            font-size: 0.8em;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .eq-band input[type="range"] {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 8px;
+            height: 100px;
+            cursor: pointer;
+        }
+
+        .eq-visualizer {
+            margin-top: 20px;
+            height: 150px;
+            background: #000;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 3px;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .eq-bar {
+            width: 20px;
+            background: linear-gradient(to top, #00ff00, #ffff00, #ff0000);
+            border-radius: 3px 3px 0 0;
+            transition: height 0.1s ease;
+        }
+
+        .add-music {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 2px solid #000;
         }
 
         .add-music h3 {
             margin-bottom: 20px;
             text-align: center;
+            color: #000;
         }
 
         .file-input-wrapper {
@@ -170,7 +341,7 @@
         }
 
         .file-input-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: #000;
             color: #fff;
             padding: 15px 30px;
             border-radius: 50px;
@@ -181,7 +352,7 @@
         }
 
         .file-input-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: #333;
         }
 
         .playlist {
@@ -190,6 +361,7 @@
 
         .playlist h3 {
             margin-bottom: 15px;
+            color: #000;
         }
 
         .playlist-items {
@@ -199,7 +371,7 @@
         }
 
         .playlist-item {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 10px;
@@ -211,16 +383,20 @@
         }
 
         .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .playlist-item.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-left: 4px solid #fff;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #000;
+        }
+
+        .playlist-item span {
+            color: #000;
         }
 
         .playlist-item .delete-btn {
-            background: rgba(255, 0, 0, 0.5);
+            background: rgba(255, 0, 0, 0.7);
             border: none;
             color: #fff;
             padding: 5px 10px;
@@ -230,7 +406,7 @@
         }
 
         .playlist-item .delete-btn:hover {
-            background: rgba(255, 0, 0, 0.8);
+            background: rgba(255, 0, 0, 1);
         }
 
         ::-webkit-scrollbar {
@@ -238,71 +414,152 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
 
-    <div class="container">
-        <h1>🎵 Музыкальный Проигрыватель</h1>
+    <!-- Стартовая страница -->
+    <div class="landing-page active" id="landing-page">
+        <h1>🎵 LLMusic</h1>
+        <p>Ваш персональный музыкальный проигрыватель</p>
+        <button class="start-btn" onclick="goToPlayer()">Начать</button>
+    </div>
 
-        <div class="player">
-            <div class="now-playing">
-                <h2 id="track-name">Нет трека</h2>
-                <p id="artist-name">Добавьте музыку</p>
-            </div>
-
-            <audio id="audio"></audio>
-
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar">
-                    <div class="progress" id="progress"></div>
-                </div>
-                <div class="time-display">
-                    <span id="current-time">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button id="prev-btn">⏮</button>
-                <button id="play-btn">▶</button>
-                <button id="next-btn">⏭</button>
-            </div>
-
-            <div class="volume-control">
-                <span>🔊</span>
-                <input type="range" id="volume" min="0" max="100" value="70">
-            </div>
+    <!-- Страница проигрывателя -->
+    <div class="player-page" id="player-page">
+        <div class="nav-header">
+            <div class="logo">🎵 LLMusic</div>
+            <button class="home-btn" onclick="goToLanding()">Главная</button>
         </div>
 
-        <div class="add-music">
-            <h3>Добавить музыку</h3>
-            <div class="file-input-wrapper">
-                <div class="file-input-btn">📁 Выберите аудиофайл (MP3, WAV, OGG)</div>
-                <input type="file" id="file-input" accept="audio/*" multiple>
+        <div class="container">
+            <div class="main-content">
+                <div class="player">
+                    <div class="now-playing">
+                        <h2 id="track-name">Нет трека</h2>
+                        <p id="artist-name">Добавьте музыку</p>
+                    </div>
+
+                    <audio id="audio"></audio>
+
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="current-time">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button id="prev-btn">⏮</button>
+                        <button id="play-btn">▶</button>
+                        <button id="next-btn">⏭</button>
+                    </div>
+
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volume" min="0" max="100" value="70">
+                    </div>
+                </div>
+
+                <div class="equalizer">
+                    <h3>🎚️ Эквалайзер</h3>
+                    <div class="eq-controls">
+                        <div class="eq-band">
+                            <label>60Hz</label>
+                            <input type="range" class="eq-slider" data-freq="60" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>170Hz</label>
+                            <input type="range" class="eq-slider" data-freq="170" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>310Hz</label>
+                            <input type="range" class="eq-slider" data-freq="310" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>600Hz</label>
+                            <input type="range" class="eq-slider" data-freq="600" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>1kHz</label>
+                            <input type="range" class="eq-slider" data-freq="1000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>3kHz</label>
+                            <input type="range" class="eq-slider" data-freq="3000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>6kHz</label>
+                            <input type="range" class="eq-slider" data-freq="6000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>12kHz</label>
+                            <input type="range" class="eq-slider" data-freq="12000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>14kHz</label>
+                            <input type="range" class="eq-slider" data-freq="14000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                        <div class="eq-band">
+                            <label>16kHz</label>
+                            <input type="range" class="eq-slider" data-freq="16000" min="-12" max="12" value="0" orient="vertical">
+                        </div>
+                    </div>
+                    <div class="eq-visualizer" id="eq-visualizer">
+                        <!-- Bars will be generated by JS -->
+                    </div>
+                </div>
             </div>
 
-            <div class="playlist">
-                <h3>Плейлист</h3>
-                <ul class="playlist-items" id="playlist-items"></ul>
+            <div class="add-music">
+                <h3>Добавить музыку</h3>
+                <div class="file-input-wrapper">
+                    <div class="file-input-btn">📁 Выберите аудиофайл (MP3, WAV, OGG)</div>
+                    <input type="file" id="file-input" accept="audio/*" multiple>
+                </div>
+
+                <div class="playlist">
+                    <h3>Плейлист</h3>
+                    <ul class="playlist-items" id="playlist-items"></ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Навигация между страницами
+        function goToPlayer() {
+            document.getElementById('landing-page').classList.remove('active');
+            document.getElementById('player-page').classList.add('active');
+            initAudioContext();
+        }
+
+        function goToLanding() {
+            document.getElementById('player-page').classList.remove('active');
+            document.getElementById('landing-page').classList.add('active');
+            if (audio && !audio.paused) {
+                audio.pause();
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            }
+        }
+
         // Canvas setup for rotating planet
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -383,6 +640,98 @@
         resize();
         animate();
 
+        // Эквалайзер и аудио контекст
+        let audioContext;
+        let analyser;
+        let source;
+        let eqFilters = [];
+        let eqVisualizerBars = [];
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 64;
+                
+                // Создаем фильтры для эквалайзера
+                const frequencies = [60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000];
+                frequencies.forEach(freq => {
+                    const filter = audioContext.createBiquadFilter();
+                    filter.type = 'peaking';
+                    filter.frequency.value = freq;
+                    filter.Q.value = 1.4;
+                    filter.gain.value = 0;
+                    eqFilters.push(filter);
+                });
+
+                // Создаем бары для визуализатора
+                const visualizer = document.getElementById('eq-visualizer');
+                visualizer.innerHTML = '';
+                for (let i = 0; i < 10; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'eq-bar';
+                    bar.style.height = '5px';
+                    visualizer.appendChild(bar);
+                    eqVisualizerBars.push(bar);
+                }
+
+                // Подключаем эквалайзер к аудио элементу
+                connectAudio();
+                
+                // Настраиваем слайдеры эквалайзера
+                setupEqSliders();
+                
+                // Запускаем визуализатор
+                updateVisualizer();
+            }
+        }
+
+        function connectAudio() {
+            if (source) {
+                source.disconnect();
+            }
+            source = audioContext.createMediaElementSource(audio);
+            
+            // Цепочка: source -> eq filters -> analyser -> destination
+            let lastNode = source;
+            eqFilters.forEach(filter => {
+                lastNode.connect(filter);
+                lastNode = filter;
+            });
+            lastNode.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+
+        function setupEqSliders() {
+            const sliders = document.querySelectorAll('.eq-slider');
+            sliders.forEach((slider, index) => {
+                slider.addEventListener('input', () => {
+                    if (eqFilters[index]) {
+                        eqFilters[index].gain.value = parseFloat(slider.value);
+                    }
+                });
+            });
+        }
+
+        function updateVisualizer() {
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            
+            function render() {
+                requestAnimationFrame(render);
+                analyser.getByteFrequencyData(dataArray);
+                
+                const step = Math.floor(dataArray.length / 10);
+                for (let i = 0; i < 10; i++) {
+                    const value = dataArray[i * step];
+                    const percent = value / 255;
+                    const height = Math.max(5, percent * 130);
+                    eqVisualizerBars[i].style.height = height + 'px';
+                }
+            }
+            
+            render();
+        }
+
         // Music Player Logic
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('play-btn');
@@ -406,21 +755,32 @@
         function loadPlaylist() {
             const savedPlaylist = localStorage.getItem('musicPlaylist');
             if (savedPlaylist) {
-                playlist = JSON.parse(savedPlaylist);
-                renderPlaylist();
-                if (playlist.length > 0) {
-                    loadTrack(0);
+                try {
+                    playlist = JSON.parse(savedPlaylist);
+                    renderPlaylist();
+                    if (playlist.length > 0) {
+                        loadTrack(0);
+                    }
+                } catch (e) {
+                    console.error('Ошибка загрузки плейлиста:', e);
+                    playlist = [];
                 }
             }
         }
 
         // Save playlist to localStorage
         function savePlaylist() {
-            localStorage.setItem('musicPlaylist', JSON.stringify(playlist));
+            try {
+                localStorage.setItem('musicPlaylist', JSON.stringify(playlist));
+            } catch (e) {
+                console.error('Ошибка сохранения плейлиста:', e);
+                alert('Плейлист слишком большой для сохранения в localStorage. Некоторые треки могут не сохраниться.');
+            }
         }
 
         // Format time
         function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -444,11 +804,19 @@
         function togglePlay() {
             if (playlist.length === 0) return;
             
+            // Инициализируем аудио контекст при первом воспроизведении
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
             if (isPlaying) {
                 audio.pause();
                 playBtn.textContent = '▶';
             } else {
-                audio.play();
+                audio.play().catch(e => {
+                    console.error('Ошибка воспроизведения:', e);
+                    alert('Ошибка воспроизведения. Попробуйте добавить другой файл.');
+                });
                 playBtn.textContent = '⏸';
             }
             isPlaying = !isPlaying;
@@ -478,14 +846,17 @@
 
         // Update progress bar
         function updateProgress() {
-            const percent = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = `${percent}%`;
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-            durationEl.textContent = formatTime(audio.duration || 0);
+            if (audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progress.style.width = `${percent}%`;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+                durationEl.textContent = formatTime(audio.duration);
+            }
         }
 
         // Set progress
         function setProgress(e) {
+            if (!audio.duration) return;
             const rect = progressBar.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
             audio.currentTime = percent * audio.duration;
@@ -562,9 +933,16 @@
             }
         }
 
+        // Make deleteTrack globally accessible
+        window.deleteTrack = deleteTrack;
+        window.goToPlayer = goToPlayer;
+        window.goToLanding = goToLanding;
+
         // Handle file upload
         fileInput.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
+            
+            if (files.length === 0) return;
             
             files.forEach(file => {
                 const reader = new FileReader();
@@ -572,7 +950,8 @@
                 reader.onload = (event) => {
                     const track = {
                         name: file.name.replace(/\.[^/.]+$/, ''),
-                        data: event.target.result
+                        data: event.target.result,
+                        type: file.type
                     };
                     
                     playlist.push(track);
@@ -582,6 +961,10 @@
                     if (playlist.length === 1) {
                         loadTrack(0);
                     }
+                };
+                
+                reader.onerror = () => {
+                    console.error('Ошибка чтения файла:', file.name);
                 };
                 
                 reader.readAsDataURL(file);
@@ -598,6 +981,14 @@
         audio.addEventListener('ended', nextTrack);
         progressBar.addEventListener('click', setProgress);
         volumeSlider.addEventListener('input', setVolume);
+        
+        // Инициализация при загрузке страницы
+        audio.addEventListener('loadedmetadata', () => {
+            if (audioContext && source) {
+                // Переподключаем источник после загрузки нового трека
+                connectAudio();
+            }
+        });
 
         // Initialize
         loadPlaylist();
