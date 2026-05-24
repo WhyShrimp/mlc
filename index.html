@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальный Проигрыватель</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .player {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .now-playing {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .now-playing h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .now-playing p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .controls button:active {
+            transform: scale(0.95);
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: #fff;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .volume-control input[type="range"] {
+            width: 200px;
+            cursor: pointer;
+        }
+
+        .add-music {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .add-music h3 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-input-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-align: center;
+            display: block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-input-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .playlist {
+            margin-top: 30px;
+        }
+
+        .playlist h3 {
+            margin-bottom: 15px;
+        }
+
+        .playlist-items {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .playlist-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-left: 4px solid #fff;
+        }
+
+        .playlist-item .delete-btn {
+            background: rgba(255, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .playlist-item .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.8);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <h1>🎵 Музыкальный Проигрыватель</h1>
+
+        <div class="player">
+            <div class="now-playing">
+                <h2 id="track-name">Нет трека</h2>
+                <p id="artist-name">Добавьте музыку</p>
+            </div>
+
+            <audio id="audio"></audio>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-display">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn">⏮</button>
+                <button id="play-btn">▶</button>
+                <button id="next-btn">⏭</button>
+            </div>
+
+            <div class="volume-control">
+                <span>🔊</span>
+                <input type="range" id="volume" min="0" max="100" value="70">
+            </div>
+        </div>
+
+        <div class="add-music">
+            <h3>Добавить музыку</h3>
+            <div class="file-input-wrapper">
+                <div class="file-input-btn">📁 Выберите аудиофайл (MP3, WAV, OGG)</div>
+                <input type="file" id="file-input" accept="audio/*" multiple>
+            </div>
+
+            <div class="playlist">
+                <h3>Плейлист</h3>
+                <ul class="playlist-items" id="playlist-items"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup for rotating planet
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let points = [];
+        const numPoints = 1000;
+        const radius = 200;
+        let angleX = 0;
+        let angleY = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            generatePoints();
+        }
+
+        function generatePoints() {
+            points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const phi = Math.acos(-1 + (2 * i) / numPoints);
+                const theta = Math.sqrt(numPoints * Math.PI) * phi;
+                
+                const x = radius * Math.cos(theta) * Math.sin(phi);
+                const y = radius * Math.sin(theta) * Math.sin(phi);
+                const z = radius * Math.cos(phi);
+                
+                points.push({ x, y, z });
+            }
+        }
+
+        function rotatePoint(point, angleX, angleY) {
+            let x = point.x;
+            let y = point.y;
+            let z = point.z;
+
+            // Rotate around X axis
+            let y1 = y * Math.cos(angleX) - z * Math.sin(angleX);
+            let z1 = y * Math.sin(angleX) + z * Math.cos(angleX);
+
+            // Rotate around Y axis
+            let x2 = x * Math.cos(angleY) + z1 * Math.sin(angleY);
+            let z2 = -x * Math.sin(angleY) + z1 * Math.cos(angleY);
+
+            return { x: x2, y: y1, z: z2 };
+        }
+
+        function animate() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            angleX += 0.005;
+            angleY += 0.007;
+
+            points.forEach(point => {
+                const rotated = rotatePoint(point, angleX, angleY);
+                
+                const scale = 300 / (300 + rotated.z);
+                const x2d = centerX + rotated.x * scale;
+                const y2d = centerY + rotated.y * scale;
+
+                const alpha = (rotated.z + radius) / (2 * radius);
+                const size = Math.max(1, 2 * scale);
+
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+
+        // Music Player Logic
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volume');
+        const fileInput = document.getElementById('file-input');
+        const playlistItems = document.getElementById('playlist-items');
+        const trackName = document.getElementById('track-name');
+        const artistName = document.getElementById('artist-name');
+
+        let playlist = [];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        // Load playlist from localStorage
+        function loadPlaylist() {
+            const savedPlaylist = localStorage.getItem('musicPlaylist');
+            if (savedPlaylist) {
+                playlist = JSON.parse(savedPlaylist);
+                renderPlaylist();
+                if (playlist.length > 0) {
+                    loadTrack(0);
+                }
+            }
+        }
+
+        // Save playlist to localStorage
+        function savePlaylist() {
+            localStorage.setItem('musicPlaylist', JSON.stringify(playlist));
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Load track
+        function loadTrack(index) {
+            if (playlist.length === 0) return;
+            
+            currentTrackIndex = index;
+            const track = playlist[index];
+            
+            audio.src = track.data;
+            trackName.textContent = track.name;
+            artistName.textContent = 'Локальный файл';
+            
+            updatePlaylistUI();
+        }
+
+        // Play/Pause
+        function togglePlay() {
+            if (playlist.length === 0) return;
+            
+            if (isPlaying) {
+                audio.pause();
+                playBtn.textContent = '▶';
+            } else {
+                audio.play();
+                playBtn.textContent = '⏸';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Previous track
+        function prevTrack() {
+            if (playlist.length === 0) return;
+            
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrackIndex);
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        // Next track
+        function nextTrack() {
+            if (playlist.length === 0) return;
+            
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex);
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${percent}%`;
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+            durationEl.textContent = formatTime(audio.duration || 0);
+        }
+
+        // Set progress
+        function setProgress(e) {
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        }
+
+        // Set volume
+        function setVolume() {
+            audio.volume = volumeSlider.value / 100;
+        }
+
+        // Render playlist
+        function renderPlaylist() {
+            playlistItems.innerHTML = '';
+            
+            playlist.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.className = 'playlist-item';
+                if (index === currentTrackIndex) {
+                    li.classList.add('active');
+                }
+                
+                li.innerHTML = `
+                    <span>${track.name}</span>
+                    <button class="delete-btn" onclick="deleteTrack(${index}, event)">🗑</button>
+                `;
+                
+                li.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('delete-btn')) {
+                        loadTrack(index);
+                        if (isPlaying) {
+                            audio.play();
+                        }
+                    }
+                });
+                
+                playlistItems.appendChild(li);
+            });
+        }
+
+        // Update playlist UI
+        function updatePlaylistUI() {
+            const items = playlistItems.querySelectorAll('.playlist-item');
+            items.forEach((item, index) => {
+                if (index === currentTrackIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Delete track
+        function deleteTrack(index, event) {
+            event.stopPropagation();
+            playlist.splice(index, 1);
+            savePlaylist();
+            renderPlaylist();
+            
+            if (playlist.length === 0) {
+                audio.src = '';
+                trackName.textContent = 'Нет трека';
+                artistName.textContent = 'Добавьте музыку';
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            } else if (index === currentTrackIndex) {
+                currentTrackIndex = Math.min(currentTrackIndex, playlist.length - 1);
+                loadTrack(currentTrackIndex);
+                if (isPlaying) {
+                    audio.play();
+                }
+            } else if (index < currentTrackIndex) {
+                currentTrackIndex--;
+                updatePlaylistUI();
+            }
+        }
+
+        // Handle file upload
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                
+                reader.onload = (event) => {
+                    const track = {
+                        name: file.name.replace(/\.[^/.]+$/, ''),
+                        data: event.target.result
+                    };
+                    
+                    playlist.push(track);
+                    savePlaylist();
+                    renderPlaylist();
+                    
+                    if (playlist.length === 1) {
+                        loadTrack(0);
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            fileInput.value = '';
+        });
+
+        // Event listeners
+        playBtn.addEventListener('click', togglePlay);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('ended', nextTrack);
+        progressBar.addEventListener('click', setProgress);
+        volumeSlider.addEventListener('input', setVolume);
+
+        // Initialize
+        loadPlaylist();
+        setVolume();
+    </script>
+</body>
+</html>
